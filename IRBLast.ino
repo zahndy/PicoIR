@@ -6,7 +6,7 @@
 #include <IRremote.hpp>
 #include <Keyboard.h>
 
-bool sentIr = false;
+bool sentIrToggle = false;
 
 void setup() {
    pinMode(LED_BUILTIN, OUTPUT);
@@ -18,20 +18,25 @@ void loop() {
   uint32_t sie_status_value = usb_hw->sie_status;
   if(sie_status_value & USB_SIE_STATUS_SUSPENDED_BITS) // USB SUSPEND  
   { 
-    if(!sentIr)
+    if(sie_status_value & USB_SIE_STATUS_CONNECTED_BITS)
     {
-      IrSender.sendNEC(0x6CD2, 0xCB, 0); //recorded onkyo on/off code
-      sentIr = true;
-      digitalWrite(LED_BUILTIN, HIGH);
+      if(!sentIrToggle)
+      {
+        IrSender.sendNEC(0x6CD2, 0xCB, 0); //turn off (recorded onkyo on/off code)
+        sentIrToggle = true;
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(60000);
+      }
     }
   }
   else 
   { 
-    if(sentIr)
+    if(sentIrToggle)
     {
-      IrSender.sendNEC(0x6CD2, 0xCB, 0);
-      sentIr = false;
+      IrSender.sendNEC(0x6CD2, 0xCB, 0); //turn on
+      sentIrToggle = false;
       digitalWrite(LED_BUILTIN, LOW);
+      delay(60000);
     }
   }
  delay(1000);
