@@ -18,8 +18,6 @@ void loop() {
   uint32_t sie_status_value = usb_hw->sie_status;
   if(sie_status_value & USB_SIE_STATUS_SUSPENDED_BITS) // USB SUSPEND  
   { 
-    if(sie_status_value & USB_SIE_STATUS_CONNECTED_BITS)
-    {
       if(!sentIrToggle)
       {
         IrSender.sendNEC(0x6CD2, 0xCB, 0); //turn off (recorded onkyo on/off code)
@@ -27,7 +25,6 @@ void loop() {
         digitalWrite(LED_BUILTIN, HIGH);
         delay(60000);
       }
-    }
   }
   else 
   { 
